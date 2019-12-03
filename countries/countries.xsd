@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="https://www.w3.org/2001/xml.xsd"/>
+
+    <xs:element name="countries">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="country" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:key name="alpha2Code">
+            <xs:selector xpath="country"/>
+            <xs:field xpath="@alpha2Code"/>
+        </xs:key>
+        <xs:key name="alpha3Code">
+            <xs:selector xpath="country"/>
+            <xs:field xpath="@alpha3Code"/>
+        </xs:key>
+        <xs:keyref name="border-alpha3Code" refer="alpha3Code">
+            <xs:selector xpath="country/borders/border"/>
+            <xs:field xpath="@alpha3Code"/>
+        </xs:keyref>
+    </xs:element>
+
+    <xs:element name="country">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="topLevelDomains" type="topLevelDomains" minOccurs="0"/>
+                <xs:element name="callingCodes" type="callingCodes" minOccurs="0"/>
+                <xs:element name="capital" type="xs:string" minOccurs="0"/>
+                <xs:element name="altSpellings" type="altSpellings" minOccurs="0"/>
+                <xs:element name="region" type="region"/>
+                <xs:element name="subregion" type="xs:string" minOccurs="0"/>
+                <xs:element name="population" type="xs:nonNegativeInteger"/>
+                <xs:element name="demonym" type="xs:string" minOccurs="0"/>
+                <xs:element name="area" type="area" nillable="true"/>
+                <xs:element name="gini" type="xs:decimal" minOccurs="0"/>
+                <xs:element name="timezones" type="timezones"/>
+                <xs:element name="borders" type="borders" minOccurs="0"/>
+                <xs:element name="nativeName" type="xs:string"/>
+                <xs:element name="numericCode" type="numericCode" minOccurs="0"/>
+                <xs:element name="currencies" type="currencies"/>
+                <xs:element name="languages" type="languages"/>
+                <xs:element name="translations" type="translations"/>
+                <xs:element name="flag" type="xs:anyURI"/>
+                <xs:element name="regionalBlocs" type="regionalBlocs" minOccurs="0"/>
+                <xs:element name="cioc" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="alpha2Code" type="alpha2Code" use="required"/>
+            <xs:attribute name="alpha3Code" type="alpha3Code" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:simpleType name="alpha2Code">
+        <xs:restriction base="xs:token">
+            <xs:pattern value="[A-Z]{2}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="alpha3Code">
+        <xs:restriction base="xs:token">
+            <xs:pattern value="[A-Z]{3}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="topLevelDomains">
+        <xs:sequence>
+            <xs:element name="topLevelDomain" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="callingCodes">
+        <xs:sequence>
+            <xs:element name="callingCode" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="altSpellings">
+        <xs:sequence>
+            <xs:element name="altSpelling" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="region">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Africa"/>
+            <xs:enumeration value="Americas"/>
+            <xs:enumeration value="Asia"/>
+            <xs:enumeration value="Europe"/>
+            <xs:enumeration value="Oceania"/>
+            <xs:enumeration value="Polar"/>
+            <xs:enumeration value="Unspecified"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="area">
+        <xs:restriction base="xs:double">
+            <xs:minInclusive value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="timezones">
+        <xs:sequence>
+            <xs:element name="timezone" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="borders">
+        <xs:sequence>
+            <xs:element name="border" minOccurs="1" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="alpha3Code" type="alpha3Code" use="required"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="numericCode">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{3}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="currencies">
+        <xs:sequence>
+            <xs:element name="currency" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="code" type="xs:string" use="optional"/>
+                            <xs:attribute name="symbol" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="languages">
+        <xs:sequence>
+            <xs:element name="language" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="iso639_1" type="xs:string" use="optional"/>
+                            <xs:attribute name="iso639_2" type="xs:string" use="required"/>
+                            <xs:attribute name="nativeName" type="xs:string" use="required"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="translations">
+        <xs:sequence>
+            <xs:element name="translation" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute ref="xml:lang" use="required"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="regionalBlocs">
+        <xs:sequence>
+            <xs:element name="regionalBloc" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="acronym" type="xs:string" use="required"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
